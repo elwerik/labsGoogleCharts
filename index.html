@@ -1,0 +1,104 @@
+<html>
+	<head>
+		<title>hola</title>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+
+	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
+
+				 var options = {
+				      width: 400,
+				      height: 240,
+				      vAxis: {minValue:0, maxValue:100},
+				      animation: {
+				        duration: 1000,
+				        easing: 'in'
+				      }
+				    };
+
+				    var chart = new google.visualization.LineChart(document.getElementById('visualization'));
+				    var data = new google.visualization.DataTable();
+				    data.addColumn('string', 'Meses');
+				    data.addColumn('number', 'Twitter');
+				    data.addColumn('number', 'Facebook');
+				    data.addColumn('number', 'Mail');
+				    data.addRow(['Enero', 123, 153, 26]);
+				    data.addRow(['Febrero', 17, 123, 189]);
+				    data.addRow(['Marzo', 36, 146, 129]);
+
+				    function drawChart() {
+				      google.visualization.events.addListener(chart, 'ready',
+				          function() {
+				            console.log('ready');
+				          });
+				      chart.draw(data, options);
+				    }
+
+
+
+				   $('#twitter').on('click',showTwitter);
+				   $('#facebook').on('click',showFacebook);
+				   $('#mail').on('click',showMail);
+
+				   function showTwitter(){
+				   		if($(this).is(':checked')){
+				   			/*data.addColumn('number','Twitter');
+				   			data.setValue(0,1,123);
+				   			data.setValue(1,1,17);
+				   			data.setValue(2,1,36);*/
+				   			//drawChart();
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			/*data.removeColumn(1);*/
+				   			var view = new google.visualization.DataView(data);
+						    view.hideColumns([1]); 
+						    chart.draw(view, options);
+				   		}
+				   		//drawChart();
+				   }
+				   function showFacebook(){
+				   		if($(this).is(':checked')){
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			//data.removeColumn(2);
+				   			var view = new google.visualization.DataView(data);
+						    view.hideColumns([2]); 
+						    chart.draw(view, options);
+				   		}
+				   		//drawChart();
+				   }
+				   function showMail(){
+				   		if($(this).is(':checked')){
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			var view = new google.visualization.DataView(data);
+						      view.hideColumns([3]); 
+						      chart.draw(view, options);
+				   			//data.removeColumn(3);
+				   		}
+				   		//drawChart();
+				   };
+
+				   drawChart();
+
+	    	}}); // load
+
+		</script>
+	</head>
+	<body>
+		<label>
+			<input type="checkbox" id="twitter" name="twitter" checked="true">Twitter
+		</label>
+		<label>
+			<input type="checkbox" id="facebook" name="facebook" checked="true">Facebook
+		</label>
+		<label>
+			<input type="checkbox" id="mail" name="mail" checked="true">Mail
+		</label>
+		<div id="visualization"></div>
+	</body>
+</html>
