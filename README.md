@@ -1,4 +1,4 @@
-googlecharts
-============
 
-Demo google charts
+labsGoogleCharts
+
+Test mostrar google charts
