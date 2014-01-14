@@ -1,0 +1,90 @@
+<html>
+	<head>
+		<title>hola</title>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        var options, chart, data, initData, resultTotal;
+
+	        initData = [['Año', 'Totales','Twitter','Facebook'],['2004',  1080, 1307, 1212],['2005', 1170, 1193, 1492],['2006',  660, 1782, 1598],['2007',  1030, 1982, 1110]],
+	        resultTotal = [];
+
+
+	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
+
+				 	options = {width: 400,height: 240,vAxis: {minValue:0, maxValue:100},animation: {duration: 1000,easing: 'in'}};
+
+				    chart = new google.visualization.LineChart(document.getElementById('visualization'));
+				    data = google.visualization.arrayToDataTable(initData);
+
+				    chart.draw(data, options);
+
+			   		$("input[type=checkbox]").click(function(){
+					    resultTotal = [];
+					    resultTotal.push(getColumn(0));
+					    getResults();
+					});
+
+					var getResults = function(){
+					    //recolectar los values del check
+					    $("input[type=checkbox]:checked").each(function(i, e){
+					        var key = $(e).val();
+					        console.log(key);
+					        resultTotal.push(getColumn(key));
+					    });
+					    var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
+					    chart.draw(data, options);
+					    console.log("o===>", createFormat(resultTotal));
+
+					};
+
+					//me trae data mas no el formato como el initData
+					var getColumn = function(index){
+					    var arrays = initData,
+					        _result = [];
+					    for(var i = 0; i < arrays.length; i++){
+					      for(var j = 0; j < arrays[i].length; j++){
+					          if(index == j){
+					            _result.push(arrays[i][index]);
+					          }
+					      }
+					    }
+					    return _result;
+					};
+
+					var createFormat = function(collectionArray){
+					    if (!collectionArray[0]){
+					        return [];
+					    }
+					    var cell,
+					        column,
+					        _result = [],
+					        lengthRow = collectionArray[0].length;
+					    for(var i = 0; i < lengthRow; i++){
+					        cell = [];
+					        for(var j = 0; j < collectionArray.length; j++){
+					            cell.push(collectionArray[j][i]);
+					        };
+					        _result.push(cell);
+					    };
+					    return _result;
+					};
+
+
+	    	}}); // load
+
+		</script>
+	</head>
+	<body>
+		<label>
+			<input type="checkbox" id="totales" name="estadisticas" checked="true" value="1">Totales
+		</label>
+		<label>
+			<input type="checkbox" id="facebook" name="estadisticas" value="2">Twitter
+		</label>
+		<label>
+			<input type="checkbox" id="twitter" name="estadisticas" value="3">Facebook
+		</label>
+		<div id="visualization"></div>
+	</body>
+</html>
