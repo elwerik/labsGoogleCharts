@@ -4,7 +4,7 @@
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	    <script type="text/javascript">
-	        var options, chart, data, initData, resultTotal;
+	        var options, chart, data, initData, resultTotal,flagNoData;
 
 	        initData = [['Año', 'Totales','Twitter','Facebook'],['2004',  1080, 1307, 1212],['2005', 1170, 1193, 1492],['2006',  660, 1782, 1598],['2007',  1030, 1982, 1110]],
 	        resultTotal = [];
@@ -12,12 +12,32 @@
 
 	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
 
-				 	options = {width: 400,height: 240,vAxis: {minValue:0, maxValue:100},animation: {duration: 1000,easing: 'in'}};
+	    			options = {
+				 		width: 700,
+				 		height: 700,
+				 		vAxis: {
+				 			minValue:0,
+				 			maxValue:100,
+				 			baselineColor:  'black'
+				 		},
+				 		animation: {duration: 1000,easing: 'in'},
+				 		series: {0:{color: '#3366cc', visibleInLegend: false},1:{color: '#dc3912', visibleInLegend: false},2:{color: '#ff9900', visibleInLegend: false}},
+				 		hAxis : {
+				 			titleTextStyle: {color: '#FF0000'},
+				 			baselineColor :  'black'
+				 		},
+				 		axisTitlesPosition : 'none'
+				 	};
 
-				    chart = new google.visualization.LineChart(document.getElementById('visualization'));
-				    data = google.visualization.arrayToDataTable(initData);
+				 	chart = new google.visualization.LineChart(document.getElementById('visualization'));
 
-				    chart.draw(data, options);
+				 	var initDraw = function(){
+						var resultTotal = [];
+					    resultTotal.push(getColumn(0));
+					    resultTotal.push(getColumn(1));
+					    var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
+					    chart.draw(data, options);
+					}
 
 			   		$("input[type=checkbox]").click(function(){
 					    resultTotal = [];
@@ -25,17 +45,23 @@
 					    getResults();
 					});
 
+
 					var getResults = function(){
 					    //recolectar los values del check
 					    $("input[type=checkbox]:checked").each(function(i, e){
 					        var key = $(e).val();
-					        console.log(key);
 					        resultTotal.push(getColumn(key));
+					        console.log('getColumn(key)',getColumn(key));
 					    });
-					    var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
-					    chart.draw(data, options);
-					    console.log("o===>", createFormat(resultTotal));
-
+					    if($("input[type=checkbox]:checked").length == 0){
+					    	console.log('asd');
+				          	$('#visualization').fadeOut('fast');	
+				        }else{
+				        	$('#visualization').fadeIn('fast');
+				        	var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
+					    	chart.draw(data, options);
+				        }
+					    
 					};
 
 					//me trae data mas no el formato como el initData
@@ -69,6 +95,13 @@
 					    };
 					    return _result;
 					};
+
+					
+				    /*chart = new google.visualization.LineChart(document.getElementById('visualization'));
+				    data = google.visualization.arrayToDataTable(initData);
+				    chart.draw(data, options);*/
+
+				    initDraw();
 
 
 	    	}}); // load
