@@ -7,7 +7,8 @@
 	        var options, chart, data, initData, resultTotal,flagNoData;
 
 	        initData = [['Año', 'Totales','Twitter','Facebook'],['2004',  1080, 1307, 1212],['2005', 1170, 1193, 1492],['2006',  660, 1782, 1598],['2007',  1030, 1982, 1110]],
-	        resultTotal = [];
+	        resultTotal = [],
+	        arrayColors = ['#3366cc','#dc3912','#ff9900'];
 
 
 	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
@@ -20,8 +21,9 @@
 				 			maxValue:100,
 				 			baselineColor:  'black'
 				 		},
+				 		colors : arrayColors,
 				 		animation: {duration: 1000,easing: 'in'},
-				 		series: {0:{color: '#3366cc', visibleInLegend: false},1:{color: '#dc3912', visibleInLegend: false},2:{color: '#ff9900', visibleInLegend: false}},
+				 		/*series: {0:{color: '#3366cc', visibleInLegend: false},1:{color: '#dc3912', visibleInLegend: false},2:{color: '#ff9900', visibleInLegend: false}},*/
 				 		hAxis : {
 				 			titleTextStyle: {color: '#FF0000'},
 				 			baselineColor :  'black'
@@ -48,16 +50,19 @@
 
 					var getResults = function(){
 					    //recolectar los values del check
+					    var newArray = [];
 					    $("input[type=checkbox]:checked").each(function(i, e){
 					        var key = $(e).val();
 					        resultTotal.push(getColumn(key));
-					        console.log('getColumn(key)',getColumn(key));
+					        console.log(key);
+					        newArray.push(arrayColors[key-1]);
+
 					    });
 					    if($("input[type=checkbox]:checked").length == 0){
-					    	console.log('asd');
 				          	$('#visualization').fadeOut('fast');	
 				        }else{
 				        	$('#visualization').fadeIn('fast');
+				        	options.colors = newArray;
 				        	var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
 					    	chart.draw(data, options);
 				        }
