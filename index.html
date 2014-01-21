@@ -1,90 +1,106 @@
-
 <html>
 	<head>
-		<title>hola</title>
+		<title>labs google charts</title>
 		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	    <script type="text/javascript">
+	        var options, chart, data, initData, resultTotal, arrayColors, initDraw, getResults, getColumn, createFormat;
+
+	        initData = [['Año', 'Totales','Twitter','Facebook'],['2004',  1080, 1307, 1212],['2005', 1170, 1193, 1492],['2006',  660, 1782, 1598],['2007',  1030, 1982, 1110]],
+	        resultTotal = [],
+	        arrayColors = ['#3366cc','#dc3912','#ff9900'];
+
 
 	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
 
-				 var options = {
-				      width: 400,
-				      height: 240,
-				      vAxis: {minValue:0, maxValue:100},
-				      animation: {
-				        duration: 1000,
-				        easing: 'in'
-				      }
-				    };
+	    			options = {
+				 		width: 700,
+				 		height: 350,
+				 		vAxis: {
+				 			minValue:0,
+				 			maxValue:100,
+				 			baselineColor:  'black'
+				 		},
+				 		colors : arrayColors,
+				 		animation: {duration: 1000,easing: 'in'},
+				 		/*series: {0:{color: '#3366cc', visibleInLegend: false},1:{color: '#dc3912', visibleInLegend: false},2:{color: '#ff9900', visibleInLegend: false}},*/
+				 		hAxis : {
+				 			titleTextStyle: {color: '#FF0000'},
+				 			baselineColor :  'black'
+				 		},
+				 		axisTitlesPosition : 'none'
+				 	};
 
-				    var chart = new google.visualization.LineChart(document.getElementById('visualization'));
-				    var data = new google.visualization.DataTable();
-				    data.addColumn('string', 'Meses');
-				    data.addColumn('number', 'Twitter');
-				    data.addColumn('number', 'Facebook');
-				    data.addColumn('number', 'Mail');
-				    data.addRow(['Enero', 123, 153, 26]);
-				    data.addRow(['Febrero', 17, 123, 189]);
-				    data.addRow(['Marzo', 36, 146, 129]);
+				 	chart = new google.visualization.LineChart(document.getElementById('visualization'));
 
-				    function drawChart() {
-				      google.visualization.events.addListener(chart, 'ready',
-				          function() {
-				            console.log('ready');
-				          });
-				      chart.draw(data, options);
-				    }
+				 	initDraw = function(){
+						var resultTotal = [];
+					    resultTotal.push(getColumn(0));
+					    resultTotal.push(getColumn(1));
+					    var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
+					    chart.draw(data, options);
+					}
+
+			   		$("input[type=checkbox]").on('click',function(){
+					    resultTotal = [];
+					    resultTotal.push(getColumn(0));
+					    getResults();
+					});
 
 
+					getResults = function(){
+					    var newArray = [];
+					    $("input[type=checkbox]:checked").each(function(i, e){
+					        var key = $(e).val();
+					        resultTotal.push(getColumn(key));
+					        newArray.push(arrayColors[key-1]);
 
-				   $('#twitter').on('click',showTwitter);
-				   $('#facebook').on('click',showFacebook);
-				   $('#mail').on('click',showMail);
+					    });
+					    if($("input[type=checkbox]:checked").length == 0){
+				          	$('#visualization').fadeOut('fast');	
+				        }else{
+				        	$('#visualization').fadeIn('fast');
+				        	options.colors = newArray;
+				        	var data = google.visualization.arrayToDataTable(createFormat(resultTotal));
+					    	chart.draw(data, options);
+				        }
+					    
+					};
 
-				   function showTwitter(){
-				   		if($(this).is(':checked')){
-				   			/*data.addColumn('number','Twitter');
-				   			data.setValue(0,1,123);
-				   			data.setValue(1,1,17);
-				   			data.setValue(2,1,36);*/
-				   			//drawChart();
-				   			var view = new google.visualization.DataView(data);
-				   			chart.draw(view, options);
-				   		}else{
-				   			/*data.removeColumn(1);*/
-				   			var view = new google.visualization.DataView(data);
-						    view.hideColumns([1]); 
-						    chart.draw(view, options);
-				   		}
-				   		//drawChart();
-				   }
-				   function showFacebook(){
-				   		if($(this).is(':checked')){
-				   			var view = new google.visualization.DataView(data);
-				   			chart.draw(view, options);
-				   		}else{
-				   			//data.removeColumn(2);
-				   			var view = new google.visualization.DataView(data);
-						    view.hideColumns([2]); 
-						    chart.draw(view, options);
-				   		}
-				   		//drawChart();
-				   }
-				   function showMail(){
-				   		if($(this).is(':checked')){
-				   			var view = new google.visualization.DataView(data);
-				   			chart.draw(view, options);
-				   		}else{
-				   			var view = new google.visualization.DataView(data);
-						      view.hideColumns([3]); 
-						      chart.draw(view, options);
-				   			//data.removeColumn(3);
-				   		}
-				   		//drawChart();
-				   };
+					//me trae data mas no el formato como el initData
+					getColumn = function(index){
+					    var arrays = initData,
+					        _result = [];
+					    for(var i = 0; i < arrays.length; i++){
+					      for(var j = 0; j < arrays[i].length; j++){
+					          if(index == j){
+					            _result.push(arrays[i][index]);
+					          }
+					      }
+					    }
+					    return _result;
+					};
 
-				   drawChart();
+					createFormat = function(collectionArray){
+					    if (!collectionArray[0]){
+					        return [];
+					    }
+					    var cell,
+					        column,
+					        _result = [],
+					        lengthRow = collectionArray[0].length;
+					    for(var i = 0; i < lengthRow; i++){
+					        cell = [];
+					        for(var j = 0; j < collectionArray.length; j++){
+					            cell.push(collectionArray[j][i]);
+					        };
+					        _result.push(cell);
+					    };
+					    return _result;
+					};
+
+				    initDraw();
+
 
 	    	}}); // load
 
@@ -92,13 +108,13 @@
 	</head>
 	<body>
 		<label>
-			<input type="checkbox" id="twitter" name="twitter" checked="true">Twitter
+			<input type="checkbox" id="totales" name="estadisticas" checked="true" value="1">Totales
 		</label>
 		<label>
-			<input type="checkbox" id="facebook" name="facebook" checked="true">Facebook
+			<input type="checkbox" id="facebook" name="estadisticas" value="2">Twitter
 		</label>
 		<label>
-			<input type="checkbox" id="mail" name="mail" checked="true">Mail
+			<input type="checkbox" id="twitter" name="estadisticas" value="3">Facebook
 		</label>
 		<div id="visualization"></div>
 	</body>
