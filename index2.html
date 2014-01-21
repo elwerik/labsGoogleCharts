@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<title>hola</title>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+	        var options, chart, data, facebookData, twitterData;
+
+	        facebookData = [['Facebook'],['2004',1320],['2005',320],['2006',510],['2007', 231]];
+	        facebookData2 = ['Facebook',1320,320,510,231];
+	        twitterData = ['Twitter',412,710,565,736];
+	        initData = [['Año', 'Totales'],['2004',  1000],['2005', 1170],['2006',  660],['2007',  1030]];
+
+	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
+
+				 	options = {
+				      width: 400,
+				      height: 240,
+				      vAxis: {minValue:0, maxValue:100},
+				      animation: {
+				        duration: 1000,
+				        easing: 'in'
+				      }
+				    };
+
+				    chart = new google.visualization.LineChart(document.getElementById('visualization'));
+				    data = google.visualization.arrayToDataTable(initData);
+
+				    function drawChart() {
+				      google.visualization.events.addListener(chart, 'ready',
+				          function() {
+				            console.log('ready');
+				          });
+				      chart.draw(data, options);
+				    }
+
+
+
+				   $('#totales').on('click',showTotales);
+				   $('#facebook').on('click',showFacebook);
+				   $('#twitter').on('click',showTwitter);
+
+				   function showTotales(){
+				   		if($(this).is(':checked')){
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			var view = new google.visualization.DataView(data);
+						    view.hideColumns([1]); 
+						    chart.draw(view, options);
+				   		}
+				   }
+
+				   function showFacebook(){
+				   		if($(this).is(':checked')){
+
+				   			for(var k=0; k< initData.length; k++){
+	      						initData[k].push(facebookData2[k]);
+							};
+
+							data = google.visualization.arrayToDataTable(initData);
+
+				   			for(var i=1; i<initData;i++){
+				   				data.addRow(facebookData2[i]);
+				   				console.log('data row',facebookData2[i]);
+				   			}
+				   			
+				   		}else{
+				   			console.log('no entro checked');
+				   			for(var j=0; j<initData.length; j++){
+				   				initData[j].pop(initData.length-1);
+				   				
+				   			}
+				   			data = google.visualization.arrayToDataTable(initData);
+
+				   		}
+
+				   		chart.draw(data, options);
+				   }
+
+				   function showTwitter(){
+				   		if($(this).is(':checked')){
+				   			
+				   		}else{
+				   			
+				   		}
+				   };
+
+				   drawChart();
+
+	    	}}); // load
+
+		</script>
+	</head>
+	<body>
+		<label>
+			<input type="checkbox" id="totales" name="totales" checked="true">Totales
+		</label>
+		<label>
+			<input type="checkbox" id="facebook" name="facebook">Facebook
+		</label>
+		<label>
+			<input type="checkbox" id="twitter" name="twitter">Twitter
+		</label>
+		<div id="visualization"></div>
+	</body>
+</html>

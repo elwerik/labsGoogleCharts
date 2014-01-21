@@ -1,38 +1,105 @@
-<!DOCTYPE html>
+
 <html>
-<head>
-<script src="http://documentcloud.github.io/underscore/underscore-min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-<meta charset=utf-8 />
-<title>JS Bin</title>
-<script type="text/javascript">
-	var initData = [['Año', 'Totales','Twitter','Facebook'],['2004',  1080, 1307, 1212],['2005', 1170, 1193, 1492],['2006',  660, 1782, 1598],['2007',  1030, 1982, 1110]];
+	<head>
+		<title>hola</title>
+		<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
 
-	function remove(){
-	  var tmpArray = new Array(arguments.length);
+	    	google.load("visualization", "1", {packages:["corechart"],callback : function(){
 
-	  console.log('length',arguments.length);
-	  for(var i= 0; i<arguments.length;i++){
-	  	console.log('item',arguments[i]);
-	    var cloneArray = $.extend(true, [], initData);
-	    for(var j=0; j<cloneArray.length; j++){
-	      cloneArray[j].splice(arguments[i],1);
-	    }
-	    tmpArray[i] = cloneArray;
-	  }
+				 var options = {
+				      width: 400,
+				      height: 240,
+				      vAxis: {minValue:0, maxValue:100},
+				      animation: {
+				        duration: 1000,
+				        easing: 'in'
+				      }
+				    };
 
-	 for(var k=0; k<tmpArray.length; k++){
-  		var initDataTmp = _.intersection(initData1[i],initData2[i]);
-  		var newArray.push(initDataTmp);
-	}
+				    var chart = new google.visualization.LineChart(document.getElementById('visualization'));
+				    var data = new google.visualization.DataTable();
+				    data.addColumn('string', 'Meses');
+				    data.addColumn('number', 'Twitter');
+				    data.addColumn('number', 'Facebook');
+				    data.addColumn('number', 'Mail');
+				    data.addRow(['Enero', 123, 153, 26]);
+				    data.addRow(['Febrero', 17, 123, 189]);
+				    data.addRow(['Marzo', 36, 146, 129]);
 
-	} // remove
+				    function drawChart() {
+				      google.visualization.events.addListener(chart, 'ready',
+				          function() {
+				            console.log('ready');
+				          });
+				      chart.draw(data, options);
+				    }
 
-	remove(1,3);
 
-</script>
-</head>
-<body>
-  
-</body>
+
+				   $('#twitter').on('click',showTwitter);
+				   $('#facebook').on('click',showFacebook);
+				   $('#mail').on('click',showMail);
+
+				   function showTwitter(){
+				   		if($(this).is(':checked')){
+				   			/*data.addColumn('number','Twitter');
+				   			data.setValue(0,1,123);
+				   			data.setValue(1,1,17);
+				   			data.setValue(2,1,36);*/
+				   			//drawChart();
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			/*data.removeColumn(1);*/
+				   			var view = new google.visualization.DataView(data);
+						    view.hideColumns([1]); 
+						    chart.draw(view, options);
+				   		}
+				   		//drawChart();
+				   }
+				   function showFacebook(){
+				   		if($(this).is(':checked')){
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			//data.removeColumn(2);
+				   			var view = new google.visualization.DataView(data);
+						    view.hideColumns([2]); 
+						    chart.draw(view, options);
+				   		}
+				   		//drawChart();
+				   }
+				   function showMail(){
+				   		if($(this).is(':checked')){
+				   			var view = new google.visualization.DataView(data);
+				   			chart.draw(view, options);
+				   		}else{
+				   			var view = new google.visualization.DataView(data);
+						      view.hideColumns([3]); 
+						      chart.draw(view, options);
+				   			//data.removeColumn(3);
+				   		}
+				   		//drawChart();
+				   };
+
+				   drawChart();
+
+	    	}}); // load
+
+		</script>
+	</head>
+	<body>
+		<label>
+			<input type="checkbox" id="twitter" name="twitter" checked="true">Twitter
+		</label>
+		<label>
+			<input type="checkbox" id="facebook" name="facebook" checked="true">Facebook
+		</label>
+		<label>
+			<input type="checkbox" id="mail" name="mail" checked="true">Mail
+		</label>
+		<div id="visualization"></div>
+	</body>
 </html>
